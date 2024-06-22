@@ -2,6 +2,7 @@ package com.bruce.wecompose.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -39,47 +40,16 @@ import com.bruce.wecompose.ui.theme.WeComposeTheme
 @Composable
 fun ChatList(chats: List<Chat>) {
 
-    Box(modifier = Modifier
-        .background(WeComposeTheme.colors.background)
-        .fillMaxSize()) {
+    Column(
+        modifier = Modifier
+            .background(WeComposeTheme.colors.background)
+            .fillMaxSize()
+    ) {
+        WeTopBar(title = "微信")
         LazyColumn(Modifier.background(WeComposeTheme.colors.listItem)) {
             items(chats.size) { index ->
                 val chat = chats[index]
-                Row(Modifier.fillMaxSize()) {
-                    Image(
-                        painterResource(
-                            id = chat.friend.avatar
-                        ),
-                        contentDescription = chat.friend.name,
-                        Modifier
-                            .size(48.dp)
-                            .padding(4.dp)
-                            .unread(!chat.msgs.last().read, WeComposeTheme.colors.badge)
-                            .clip(RoundedCornerShape(4.dp))
-                    )
-                    Column(
-                        Modifier
-                            .weight(1f)
-                            .align(Alignment.CenterVertically)
-                    ) {
-                        Text(
-                            chat.friend.name,
-                            fontSize = 17.sp,
-                            color = WeComposeTheme.colors.textPrimary
-                        )
-                        Text(
-                            chat.msgs.last().text,
-                            fontSize = 14.sp,
-                            color = WeComposeTheme.colors.textSecondary
-                        )
-                    }
-                    Text(
-                        text = chat.msgs.last().time,
-                        Modifier.padding(8.dp, 8.dp, 12.dp, 8.dp),
-                        fontSize = 11.sp,
-                        color = WeComposeTheme.colors.textSecondary
-                    )
-                }
+                ChatListItem(chat)
                 if (index < chats.lastIndex) {
                     HorizontalDivider(
                         Modifier.padding(68.dp, 0.dp, 0.dp, 0.dp),
@@ -89,6 +59,51 @@ fun ChatList(chats: List<Chat>) {
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun ChatListItem(chat: Chat) {
+    val viewModel: MainViewModel = viewModel()
+    Row(
+        Modifier
+            .fillMaxSize()
+            .clickable {
+                viewModel.startChat(chat)
+            }) {
+        Image(
+            painterResource(
+                id = chat.friend.avatar
+            ),
+            contentDescription = chat.friend.name,
+            Modifier
+                .size(48.dp)
+                .padding(4.dp)
+                .unread(!chat.msgs.last().read, WeComposeTheme.colors.badge)
+                .clip(RoundedCornerShape(4.dp))
+        )
+        Column(
+            Modifier
+                .weight(1f)
+                .align(Alignment.CenterVertically)
+        ) {
+            Text(
+                chat.friend.name,
+                fontSize = 17.sp,
+                color = WeComposeTheme.colors.textPrimary
+            )
+            Text(
+                chat.msgs.last().text,
+                fontSize = 14.sp,
+                color = WeComposeTheme.colors.textSecondary
+            )
+        }
+        Text(
+            text = chat.msgs.last().time,
+            Modifier.padding(8.dp, 8.dp, 12.dp, 8.dp),
+            fontSize = 11.sp,
+            color = WeComposeTheme.colors.textSecondary
+        )
     }
 }
 
@@ -103,5 +118,7 @@ fun Modifier.unread(show: Boolean, color: Color): Modifier = this.drawWithConten
 @Composable
 private fun ChatListPreview() {
     val viewModel: MainViewModel = viewModel()
-    ChatList(chats = viewModel.chats)
+    WeComposeTheme(viewModel.theme) {
+        ChatList(chats = viewModel.chats)
+    }
 }
