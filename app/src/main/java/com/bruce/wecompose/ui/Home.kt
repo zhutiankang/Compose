@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.bruce.wecompose.MainViewModel
+import com.bruce.wecompose.ui.theme.WeComposeTheme
 
 /**
  * Home
@@ -27,7 +28,7 @@ fun Home(viewModel: MainViewModel) {
         HorizontalPager(state = object : PagerState(viewModel.selectedTab) {
             override val pageCount: Int
                 get() = 4
-        }) { pager ->
+        }, Modifier.weight(1f)) { pager ->
             when (pager) {
                 0 -> ChatList(viewModel.chats)
                 1 -> Box(modifier = Modifier.fillMaxSize())
@@ -47,8 +48,10 @@ fun Home(viewModel: MainViewModel) {
 @Composable
 private fun HomePreview() {
     val viewModel: MainViewModel = viewModel()
-    Box {
-        Home(viewModel)
-        ChatPage()
+    WeComposeTheme(viewModel.theme) {
+        Box {
+            Home(viewModel)
+            ChatPage()
+        }
     }
 }

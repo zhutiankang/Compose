@@ -71,11 +71,11 @@ class MainViewModel : ViewModel() {
     var selectedTab by mutableStateOf(0)
     var theme by mutableStateOf(WeComposeTheme.Theme.Light)
 
-    var chat: Chat? by mutableStateOf(null)
     var chatting: Boolean by mutableStateOf(false)
+    var currentChat: Chat? by mutableStateOf(null)
 
     fun startChat(chat: Chat) {
-        this.chat = chat
+        this.currentChat = chat
         this.chatting = true
     }
 
@@ -84,5 +84,9 @@ class MainViewModel : ViewModel() {
         true
     } else {
         false
+    }
+
+    fun boom(chat: Chat) {
+        chat.msgs.add(Msg(User.Me, "\uD83D\uDCA3", "15:10").apply { read = true })
     }
 }
