@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
@@ -34,7 +33,7 @@ fun Home(viewModel: MainViewModel) {
         HorizontalPager(state = pagerState, Modifier.weight(1f)) { pager ->
             when (pager) {
                 0 -> ChatList(viewModel.chats)
-                1 -> Box(modifier = Modifier.fillMaxSize())
+                1 -> ContactList(viewModel.contacts)
                 2 -> Box(modifier = Modifier.fillMaxSize())
                 3 -> Box(modifier = Modifier.fillMaxSize())
             }
