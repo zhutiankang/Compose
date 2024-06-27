@@ -19,8 +19,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.bruce.wecompose.MainViewModel
 import com.bruce.wecompose.R
 import com.bruce.wecompose.data.User
 import com.bruce.wecompose.ui.theme.WeComposeTheme
@@ -110,5 +113,14 @@ fun ContactListItem(contact: User) {
             fontSize = 17.sp,
             color = WeComposeTheme.colors.textPrimary
         )
+    }
+}
+
+@Preview
+@Composable
+private fun ContactsPreview() {
+    val viewModel:MainViewModel = viewModel()
+    WeComposeTheme(viewModel.theme) {
+        ContactList(viewModel.contacts)
     }
 }

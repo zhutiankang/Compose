@@ -34,7 +34,7 @@ fun Home(viewModel: MainViewModel) {
             when (pager) {
                 0 -> ChatList(viewModel.chats)
                 1 -> ContactList(viewModel.contacts)
-                2 -> Box(modifier = Modifier.fillMaxSize())
+                2 -> DiscoveryList()
                 3 -> Box(modifier = Modifier.fillMaxSize())
             }
 
