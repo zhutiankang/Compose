@@ -35,7 +35,7 @@ fun Home(viewModel: MainViewModel) {
                 0 -> ChatList(viewModel.chats)
                 1 -> ContactList(viewModel.contacts)
                 2 -> DiscoveryList()
-                3 -> Box(modifier = Modifier.fillMaxSize())
+                3 -> MeList()
             }
 
         }

@@ -9,6 +9,6 @@ class User(
   @DrawableRes val avatar: Int
 ) {
   companion object {
-    val Me: User = User("rengwuxian", "扔物线-朱凯", R.drawable.avatar_rengwuxian)
+    val Me: User = User("zhutiankang", "Bruce-天康", R.drawable.avatar_rengwuxian)
   }
 }
