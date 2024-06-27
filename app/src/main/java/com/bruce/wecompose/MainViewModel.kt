@@ -68,6 +68,12 @@ class MainViewModel : ViewModel() {
             ),
         )
     )
+    val contacts by mutableStateOf(
+        listOf(
+            User("gaolaoshi", "高老师", R.drawable.avatar_gaolaoshi),
+            User("diuwuxian", "丢物线", R.drawable.avatar_diuwuxian)
+        )
+    )
     var selectedTab by mutableStateOf(0)
     var theme by mutableStateOf(WeComposeTheme.Theme.Light)
 
