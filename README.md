@@ -23,3 +23,18 @@ Learning Compose
 1. padding 与 margin 内边距与外边距是相对背景来说的，padding 包括背景，margin 不包括背景
 2. Modifier.padding().background() -- 不包括背景 margin
 3. Modifier.background().padding() -- 包括背景 padding
+
+# Compose 依赖库
+
+material(3) -- Button()
+                         ----material-icons-extended
+foundation -- Row/Column ----material-icons-core
+animation
+ui -- layout
+runtime -- remember/mutableStateOf
+------
+compiler
+## 三条原则
+1. 写代码的时候，依赖 material（3）就够了；如果跳过 material依赖foundation 就够了
+2. 如果你需要ui-tooling，需要单独把它写出来
+3. 如果你需要material-icons-extended，必须专门列出来
