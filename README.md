@@ -46,12 +46,14 @@ compiler
 1. 自定义View + xml布局文件
 2. 自定义View：自定义绘制、布局、触摸反馈 onDraw() onMeasure() onLayout() onTouchEvent()
 
-# MutableState 与 mutableStateOf()
+# MutableState 与 mutableStateOf() 实现变量自动刷新
+> 核心：返回MutableState对象，MutableState的get()与set()都是定制过得，在读的时候，自动产生订阅行为，写的时候，自动触发刷新并且变量新值的应用也会触发刷新
+
 > 刷新：组合（组合过程：拼凑出界面实际内容，官方表达Composition，先Compose，ComposeView,AndroidComposeView,LayoutNode,LayoutNode-LayoutNode）
 > 布局
 > 绘制
 
-MutableState -> StateObject -> StateRecord -> Compose支持**事务**功能
+MutableState -> StateObject -> StateRecord -> Compose支持**事务**功能(支持撤销功能，回滚)
 链表：List 保存新旧值，只需要保存[头结点]就行
 User:1. Array 2. User(nextUser:User)[头结点]
 第二个：head.nextUser
@@ -66,3 +68,16 @@ Snapshot：整个状态；可以对应多个StateRecord；一个StateRecord对�
 2. 同一个StateObject的每个StateRecord，都有它们对应的Snapshot的id
 3. StateRecord和Snapshot就算不直接对应，只要StateRecord的Snapshot对另一个有效，另一个就能取到这个StateRecord
 4. Snapshot id:2可以取到Snapshot id:1，虽然2没有StateRecord，但可以取1的StateRecord
+
+两个订阅过程：
+1. 对Snapshot中读写StateObject对象的订阅，分别订阅读和写，所以有两个接受者：readObserver和writeObserver（只有在组合过程中的写事件，才会触发writeObserver）。
+发生时间：订阅是在Snapshot创建的时候；通知是在：读和写的时候。
+2. 对每一个StateObject的应用做订阅。（非组合过程，写事件会触发回调）
+发生时间：订阅是在：第一个订阅的readObserver被调用（通知）的时候；通知是在：StateObject新值被应用的时候。旧值会被标记为失效，通知刷新
+
+> 旧值会被标记为失效，通知刷新，重组之后会不会刷新取决于组合有没有改变
+get():记录读
+set():标记失效
+[应用]事件：标记失效
+
+**注意： 委托：by，委托（代理）的是里面的值（类型）[getValue()/setValue()]；= ：赋值，直接赋值（该类型）**
