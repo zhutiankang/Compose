@@ -81,3 +81,39 @@ set():标记失效
 [应用]事件：标记失效
 
 **注意： 委托：by，委托（代理）的是里面的值（类型）[getValue()/setValue()]；= ：赋值，直接赋值（该类型）**
+
+# 重组作用域与remember()
+> 运行时拿到某行代码：【反射->字节码】不算 不可行
+> 优势：比别人懂，比别人快，比别人稳，还能帮别人解决问题
+
+Recompose Scope:重组作用域
+remember：缓存策略，拿到**老对象**；起到缓存作用，防止多次初始化；var全部包上就对了。
+remember(key....): key有变化，{}重新计算，新的结果缓存下来；无变化用缓存，旧值
+
+# 「无状态」、状态提升和单向数据流
+
+> 无状态：Stateless--不是个功能，是个特点  「状态」：控件属性
+> State Hoisting：状态提升，作为参数，到上一层组件 原则：尽量不往上提
+
+1. TextField ：material的 不是foundation或者ui里面的，不可定制
+2. BasicTextField ： foundation或者ui里面的，可定制
+
+Compose: 所有页面中用到的数据都是**单向数据流**，发生事件，lamda回调给上层
+> 单向数据流: 数据从上往下传递，事件从下往上传递，不存在组件内部事件自动修改数据的机制
+
+# List mutableStateOf(mutableListof(1,2,3))不会触发刷新，状态机制的背后
+> Compose会对赋值行为（对象改变）做监听,进行代码块重组，页面刷新
+> MutableState：是否重新赋值
+> 不重新赋值监听改变：mutableStateListOf()/mutableStateMapOf()
+
+var num by mutableStateOf():读的时候会注册监听； 「写」的时候会去标记失效，实现刷新，进行代码块重组
+注意：
+1. 组合过程中，发生写，赋值，会把用到这个值的地方直接标记无效；
+2. 组合完成之后，发生写，**赋值（修改了对象引用**），需要等新值**应用**之后，才会把用到这个值的地方标记无效
+
+val numList = mutableStateListOf(1,2,3,4) -> mutableList<Int>
+val numMap = mutableStateMapOf(1 to "one", 2 to "two")
+
+# Recompose重组的性能风险和智能优化
+> Compose:自动更新 -> 「更新范围过大、超过需求」 -> 「跳过没必要的更新」
+
