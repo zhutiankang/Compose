@@ -116,4 +116,31 @@ val numMap = mutableStateMapOf(1 to "one", 2 to "two")
 
 # Recompose重组的性能风险和智能优化
 > Compose:自动更新 -> 「更新范围过大、超过需求」 -> 「跳过没必要的更新」
+> 「不可靠」类，class，hashCode() equals(),data class的 hashCode()与类的成员变量是强关联的
 
+相等：
+1. 结构性相等 kotlin:==  java:equals() 成员变量，属性相等
+2. 引用性相等 kotlin:=== java:== 同一个对象，同一个引用地址，同一个堆地址
+
+kotlin: class A(name:String):name是构造函数参数   class A (val name:String):name是属性 成员变量，默认都是 public
+先明确问题：可靠性问题，稳定性问题，而不是不跳过问题
+@Stable
+class User(name:String){
+    // 常用三角写法
+    var name by mutableStateOf(name)
+}
+## @State的稳定 
+> 不需要经常写 一般是给接口作标记 给类更少
+> 基本类型 Int String Float 等都是稳定类型
+> 保证不了 两个相等的类永远相等「不同对象」，很难，因为 equals()返回 true规则，有各种属性变数，问题前置，去掉 equals()规则，不是同一个对象坚决不相等
+> 两个不同的User对象不要用name 判断两个类的相等，什么都不用，两个不同的User对象就坚决不相等，哪怕 name 相等，让他们也不相等，equals()返回 true
+> 用原始默认的 equals() kotlin:Any.equals() java:Object.equals()，只有同一个对象，同一个引用地址与自己做比较时，才会返回 true，其他都是 false
+> 两个因为 equals()规则，比如通过比较 name，相等的 User，在之后变得不相等，因为去掉了 equals()规则，就不会发生了，而稳定了
+> 解决「两个相等的User在之后变得不相等」，方式是：让他们本来就不相等，去掉相等的前提，就没有该问题了
+
+
+- 现在相等就永远相等 少用~~data class~~ 重写了 equals() 相等性与hashCode()，属性强相关，不稳定
+- **当公开属性改变的时候，通知到用到这个属性的Composition** 只有这一点 Compose做判断，符合这一条就是稳定的，其他两点做不到，也不看，放行
+- 公开属性需要全部是稳定/可靠属性
+
+> 结论：1. 不要轻易重写 equals() 用默认原始的就行 2. var属性都要通过 by mutableStateOf()创建
