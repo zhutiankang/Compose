@@ -87,8 +87,8 @@ set():标记失效
 > 优势：比别人懂，比别人快，比别人稳，还能帮别人解决问题
 
 Recompose Scope:重组作用域
-remember：缓存策略，拿到**老对象**；起到缓存作用，防止多次初始化；var全部包上就对了。
-remember(key....): key有变化，{}重新计算，新的结果缓存下来；无变化用缓存，旧值
+> remember：缓存策略，拿到**老对象**；起到缓存作用，防止多次初始化；var全部包上就对了。
+> remember(key....): key有变化，{}重新计算，新的结果缓存下来；无变化用缓存，旧值
 
 # 「无状态」、状态提升和单向数据流
 
@@ -144,3 +144,17 @@ class User(name:String){
 - 公开属性需要全部是稳定/可靠属性
 
 > 结论：1. 不要轻易重写 equals() 用默认原始的就行 2. var属性都要通过 by mutableStateOf()创建
+
+
+# derivedStateOf()派生状态，依赖其他状态{ }重组的时候重新执行括号里面的代码和 remember(key...)的区别
+最好的学法：边学边练，触发重组
+1. derivedStateOf(): 派生状态，依赖其他MutableState状态，{ }MutableState值改变，触发重组的时候，会重新执行括号里面的代码，会订阅{ }里面的所有状态对象
+2. remember(key...): key有变化，{}重新计算，新的结果缓存下来；无变化用缓存，旧值，**String，属于常量对象可以变化，List内容虽然改变但是对象地址不变，会出问题不重新计算**
+
+> 监听状态变化从而自动刷新，有两种写法：带参数的remember(key...);和不带参数的remember() + derivedStateOf(),状态提升
+> 上面这个不全对：对于状态对象来说(mutableStateOf()、mutableStateListOf()、mutableStateMapOf())，带参数的remember(key...)不能使用的，只能使用derivedStateOf()
+> 对于函数参数里的字符串，监听链条会被掐断，所以不能用derivedStateOf()，只能用带参数的remember(key...)
+
+带参数的remember(key...)：可以判断对象的重新赋值；derivedStateOf()：不能完美做到，所以带参数的remember(key...)适合的场景是函数参数
+derivedStateOf()：适应于监听状态对象。( = mutableStateOf() not by、mutableStateListOf()、mutableStateMapOf())
+by mutableStateOf()所代理的对象：用两种都行
