@@ -158,3 +158,32 @@ class User(name:String){
 带参数的remember(key...)：可以判断对象的重新赋值；derivedStateOf()：不能完美做到，所以带参数的remember(key...)适合的场景是函数参数
 derivedStateOf()：适应于监听状态对象。( = mutableStateOf() not by、mutableStateListOf()、mutableStateMapOf())
 by mutableStateOf()所代理的对象：用两种都行
+
+# CompositionLocal是状态，但又不完全是  局部变量 具有穿透函数功能的局部变量，不需要状态提升了，不需要显式传递的函数参数
+> error("CompositionLocal values must never be null")
+> 变量 -> 函数参数 -> CompositionLocal
+> 把它创建成一个「不怕影响到更大范围」的对象 -> 共识
+> 使用场景：上下文 、环境；主题
+> 外面给的，里面要的（函数参数）
+
+CompositionLocalProvider(LocalUser provides user) {
+    xxx()
+}
+val LocalUser = compositionLocalOf<User> { error("CompositionLocal values must never be null")}
+---
+CompositionLocalProvider(LocalActivity provides this) {
+    LocalActivity.current
+}
+val LocalActivity = compositionLocalOf<Activity> { error("CompositionLocal values must never be null")}
+---
+CompositionLocalProvider(LocalBackgroundColor provides Color.Red) {
+    LocalBackgroundColor.current
+}
+val LocalBackgroundColor = compositionLocalOf<Color> { error("CompositionLocal values must never be null")}
+---
+> 可以提供默认值，只不过不推荐 对应作用域，值改变会触发重组，staticCompositionLocalOf 全量刷新，有性能消耗，非局部刷新
+> 使用场景：不经常刷新，不变的：staticCompositionLocalOf；经常刷新：compositionLocalOf
+
+val local = staticCompositionLocalOf<Color> { error("CompositionLocal values must never be null") }
+var themeColor = mutableStateOf("red")
+CompositionLocalProvider(local provides themeColor.value) {}
