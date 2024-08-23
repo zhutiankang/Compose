@@ -187,3 +187,5 @@ val LocalBackgroundColor = compositionLocalOf<Color> { error("CompositionLocal v
 val local = staticCompositionLocalOf<Color> { error("CompositionLocal values must never be null") }
 var themeColor = mutableStateOf("red")
 CompositionLocalProvider(local provides themeColor.value) {}
+
+> MutableState与State区别：都可以监听值的变化刷新，但是State只读，不能手动修改，MutableState可以修改
